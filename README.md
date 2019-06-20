@@ -1,7 +1,7 @@
 # QRit
 Easily transfer a file from web to any platform that reads a QR code. Node js has been used to create back-end of this project. Bootstrap template 'Grayscale' has been used for front end.
 
-##Project Idea
+## Project Idea
 In order to make it convinient to share files over device, QR code should be the right medium as it can be used on almost any device that can read a QR Code.
 
 ## Tools and Technologies used
