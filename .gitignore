@@ -1,4 +1,4 @@
-build_stock/*
+public/build_stock/*
 nServer.sh
 pServer.sh
 pServer2xx.sh
