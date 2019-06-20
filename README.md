@@ -28,3 +28,8 @@ http://localhost:8086/
 
 ## Screenshots
 
+![S2](https://raw.githubusercontent.com/ygyash/Qrit/master/images/Screenshot%202.png)
+
+![S1](https://raw.githubusercontent.com/ygyash/Qrit/master/images/Screenshot%201.png)
+
+![S3](https://raw.githubusercontent.com/ygyash/Qrit/master/images/Screenshot%203.png)
