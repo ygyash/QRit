@@ -1,1 +1,0 @@
-This directory contains all the uploaded files which are shared.

@@ -1,18 +1,16 @@
 var express = require('express');
 var app = express();
+var ip = require('ip');
 var apiRouter = express.Router();
-var http = require('http');
 var fs = require('fs');
 var formidable = require('formidable');
-var QrCode = require('qrcode');
-var bodyParser = require('body-parser');
+
 
 
  
 // html file containing upload form
-//var upload_html = fs.readFileSync("./index.html");
 var upload_html = fs.readFileSync("./public/index.html");
-var qrcode_html = fs.readFileSync('./public/qrcode.html');
+var qrcode_html = fs.readFileSync("./public/qrcode.html");
 
 app.use(express.static(__dirname + '/public'));
 
@@ -26,23 +24,31 @@ app.get('/',function(req,res){
 });
 
 app.post('/',function(req,res){
+  
     res.end(upload_html);
 });
 
-app.post('/upload', function (req, res) {
+
+
+try{
+	app.post('/upload', function (req, res) {
 
      var form = new formidable.IncomingForm();
         form.parse(req);
+        form.maxFileSize = 1024*1024*1024;
 
     form.on('fileBegin', function (name, file){
-        var updatedPath = "http://192.168.117.97:8000/build_stock/";
-        var name = file.name
-        for(i=0;i<file.name.length;i++)
+    	//replace this with the ipv4 address of your computer in the network
+    	//this is the link which will be downloaded
+        var updatedPath = "http://"+ip.address()+":8000/build_stock/";
+        var name = file.name;
+        //updatedPath is changed to edit all the spaces and special characters present in the file name
+         for(i=0;i<file.name.length;i++)
         {  
             if(file.name[i]==" ")
             {   
                 updatedPath+="%20";
-                //console.log("Char encoded:"+updatedPath);
+                
             }
             else if(file.name[i]=="-"){
                 updatedPath += "%2D";
@@ -57,6 +63,7 @@ app.post('/upload', function (req, res) {
             {
                 updatedPath+=file.name[i];
             }
+            //console.log("Char encoded:"+updatedPath);
         }
         console.log(updatedPath);
         var constant = {
@@ -66,69 +73,32 @@ app.post('/upload', function (req, res) {
                 "link":updatedPath
             }
         };
-        fs.writeFile(__dirname + "/public"+"/data.json",JSON.stringify(constant,null,2),function(err){
+        /*writing the file name and the link of the file in a json file
+            which can be accessed by the front end API for creating the QR code 
+        */
+        console.log(file.name);
+       if(file.name!=undefined){
+       	 fs.writeFile(__dirname + "/public"+"/data.json",JSON.stringify(constant,null,2),function(err){
             if(err) return console.log(err);
         });
         file.path = __dirname + '/build_stock/' + name;    
-
-        /*QrCode.toDataURL(updatedPath,function(err,url){
-               
-                    var htmlImg = "<body><img src='"+url+"'/></body>";
-                    res.write(htmlImg);
-                    res.end();
-                });*/
-        //res.send(updatedPath);
+    }
+    else{
+    	res.sendStatusCode(404);
+    }
 
 
     });
             res.end(qrcode_html);
 
-    //res.sendFile(req.body.user.file);
+    
 });
-/*app.get('/fileupload',function(req,res){
-    var form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
-            
-            var oldpath = files.filetoupload.path;
-            var newpath = upload_path + files.filetoupload.name;
 
-            
-            fs.rename(oldpath, newpath, function (err) {
-                if (err) throw err;
+}
+catch(e){
+	console.log(e);
+}
 
-                var updatedPath = "";
-                for(i=13;i<newpath.length;i++)
-                {  
-                    if(newpath[i]==" ")
-                    {   
-                        updatedPath+="%20";
-                        //console.log("Char encoded:"+updatedPath);
-                    }
-                    else if(newpath[i]=="-"){
-                            updatedPath += "%2D";
-                    }
-                    else if(newpath[i]=="_"){
-                        updatedPath += "%5F";
-                    }
-                    else if(newpath[i]=="~"){
-                        updatedPath+="%7E";
-                    }
-                    else
-                    {
-                        updatedPath+=newpath[i];
-                    }
-                }
-
-                console.log("updatedPath:"+updatedPath);
-                 QrCode.toDataURL('http://192.168.117.97:8000/'+updatedPath,function(err,url){
-                    var htmlImg = "<body><img src='"+url+"'/></body>";
-                    res.send(htmlImg);
-                });
-            });
-        });
-    });
-
-app.post('/fileupload',function(req,res){
-
-});*/
- app.listen(8086);
+ app.listen(8086,function(){
+ 	console.log("Sharing your file using QR Code: Running on 8086");
+ });
