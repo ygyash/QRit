@@ -1,0 +1,26 @@
+{
+  "name": "upload",
+  "version": "1.0.0",
+  "description": "QRit ",
+  "main": "upload.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "formidable": "^1.2.1",
+    "ip": "^1.1.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node upload.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ygyash/PC-to-Phone-Transfer-using-QR-Code.git"
+  },
+  "author": "Yash Goyal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ygyash/PC-to-Phone-Transfer-using-QR-Code/issues"
+  },
+  "homepage": "https://github.com/ygyash/PC-to-Phone-Transfer-using-QR-Code#readme"
+}
