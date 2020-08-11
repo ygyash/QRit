@@ -33,39 +33,52 @@ app.get('/upload', function (req, res) {
 });
 
 app.get('/getSignedUrlApi', async (req, res) => {
-    var body = url.parse(req.url, true).query;
-    var s3 = new AWS.S3({
-        accessKeyId: process.env.AWS_ID,
-        secretAccessKey: process.env.AWS_SECRET
-    });
+    try {
+        var body = url.parse(req.url, true).query;
+        if (body.size > 500000000) {
+            res.sendStatus(400).send({
+                error: "The file is too big."
+            })
+        }
+        var s3 = new AWS.S3({
+            accessKeyId: process.env.AWS_ID,
+            secretAccessKey: process.env.AWS_SECRET
+        });
 
-    var ext = body.name.split('.');
-    ext = ext[ext.length-1]
+        var ext = body.name.split('.');
+        ext = ext[ext.length - 1]
 
-    var key = uuidv4()+'.'+ext;
+        var key = uuidv4() + '.' + ext;
 
-    var uploadPreSignedUrl = s3.getSignedUrl('putObject', {
-        Bucket: process.env.BUCKET_NAME,
-        Key: key ,
-        ACL: 'authenticated-read',
-        ContentType: body.type,
-        Expires:5*60*60
-    });
+        var uploadPreSignedUrl = s3.getSignedUrl('putObject', {
+            Bucket: process.env.BUCKET_NAME,
+            Key: key,
+            ACL: 'authenticated-read',
+            ContentType: body.type,
+            Expires: 5 * 60 * 60
+        });
 
-    var downloadPreSignedUrl = s3.getSignedUrl('getObject', {
-        Bucket: process.env.BUCKET_NAME,
-        Key: key,
-        ResponseContentType: body.type
-    });
+        var downloadPreSignedUrl = s3.getSignedUrl('getObject', {
+            Bucket: process.env.BUCKET_NAME,
+            Key: key,
+            ResponseContentType: body.type
+        });
 
 
 
-    console.log(uploadPreSignedUrl);
-    console.log(downloadPreSignedUrl);
-    return res.status(200).send({
-        uploadUrl: uploadPreSignedUrl,
-        downloadUrl: downloadPreSignedUrl
-    })
+        console.log(uploadPreSignedUrl);
+        console.log(downloadPreSignedUrl);
+        return res.status(200).send({
+            uploadUrl: uploadPreSignedUrl,
+            downloadUrl: downloadPreSignedUrl
+        })
+    }
+    catch(e){
+        console.log(e);
+        res.sendStatus(500).send({
+            error:e
+        });
+    }
 });
 
 app.listen(PORT, function () {
