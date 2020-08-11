@@ -35,6 +35,11 @@ app.get('/upload', function (req, res) {
 app.get('/getSignedUrlApi', async (req, res) => {
     try {
         var body = url.parse(req.url, true).query;
+        if(body.size()==0){
+            res.sendStatus(400).send({
+                error:"The file is empty."
+            })
+        }
         if (body.size > 500000000) {
             res.sendStatus(400).send({
                 error: "The file is too big."
