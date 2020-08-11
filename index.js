@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const ip = require('ip');
 const fs = require('fs');
 const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
